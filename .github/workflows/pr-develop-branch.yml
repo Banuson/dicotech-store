@@ -66,10 +66,9 @@ jobs:
           sf sgd source delta \
             --to "HEAD" \
             --from "HEAD^" \
-            --output changed-sources/ \
+            --output-dir changed-sources/ \
             --generate-delta \
-            --source force-app/
-
+            --source-dir force-app/
       - name: 'Scan Apex code'
         run: |
           cd changed-sources
@@ -81,7 +80,7 @@ jobs:
           cd ..
 
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: changed-sources/apexScanResults.sarif
 
