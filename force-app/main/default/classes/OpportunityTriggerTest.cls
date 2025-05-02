@@ -13,6 +13,6 @@ public class OpportunityTriggerTest {
         Test.stopTest();
 
         Opportunity insertedOpp = [SELECT StageName FROM Opportunity WHERE Id = :opp.Id];
-        System.assertEquals('Prospecting', insertedOpp.StageName); //add comment to check cicd 2
+        System.assertEquals('Prospecting', insertedOpp.StageName); //add comment to check cicd 3
     }
 }
