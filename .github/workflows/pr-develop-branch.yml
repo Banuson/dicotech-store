@@ -102,7 +102,7 @@ jobs:
             --source-dir changed-sources/force-app \
             --test-level RunSpecifiedTests \
             --runtests ${{ env.APEX_TESTS }} \
-            --check-only \
+            --dry-run \
             --json
 
       - name: 'Check-only deploy delta changes - run all tests'
@@ -111,12 +111,12 @@ jobs:
           sf project deploy start \
             --source-dir changed-sources/force-app \
             --test-level RunLocalTests \
-            --check-only \
+            --dry-run \
             --json
 
       - name: 'Deploy destructive changes (if any)'
         run: |
           sf project deploy start \
             --manifest changed-sources/destructiveChanges/package.xml \
-            --check-only \
+            --dry-run \
             --ignore-conflicts
