@@ -114,11 +114,11 @@ jobs:
             --dry-run \
             --json
 
-      - name: 'Deploy destructive changes (if any)'
-        run: |
-           sf project deploy validate \
-            --target-org ${{ secrets.DEPLOYMENT_USER_NAME }} \
-            --pre-destructive-changes changed-sources/destructiveChanges/destructiveChanges.xml \
-            --json
+      # - name: 'Deploy destructive changes (if any)'
+      #   run: |
+      #      sf project deploy validate \
+      #       --target-org ${{ secrets.DEPLOYMENT_USER_NAME }} \
+      #       --pre-destructive-changes changed-sources/destructiveChanges/destructiveChanges.xml \
+      #       --json
             
       # --manifest changed-sources/destructiveChanges/package.xml \
