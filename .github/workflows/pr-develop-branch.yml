@@ -116,9 +116,9 @@ jobs:
 
       - name: 'Deploy destructive changes (if any)'
         run: |
-          sf project deploy start \
-            --destructive-changes changed-sources/destructiveChanges/destructiveChanges.xml \
-            --dry-run \
-            --ignore-conflicts
+           sf project deploy validate \
+            --target-org ${{ secrets.DEPLOYMENT_USER_NAME }} \
+            --pre-destructive-changes changed-sources/destructiveChanges/destructiveChanges.xml \
+            --json
             
       # --manifest changed-sources/destructiveChanges/package.xml \
