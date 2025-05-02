@@ -1,4 +1,4 @@
-name: Deploy to CommerceCloudAndreiDev environment on push to main
+name: Deploy to CCAndreiDev environment on push to main
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
       - 'force-app/**'
 
 jobs:
-  Deploy-to-CCAndreiDevgit statu-environment:
+  Deploy-to-CCAndreiDev-environment:
       runs-on: ubuntu-latest
-      environment: CommerceCloudAndreiDev
+      environment: CCAndreiDev
       steps:
           - uses: actions/setup-node@v3
             with:
