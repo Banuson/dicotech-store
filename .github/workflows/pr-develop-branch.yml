@@ -83,16 +83,16 @@ jobs:
             --outfile 'apexScanResults.sarif'
           cd ..
 
-      # - name: Upload SARIF
-      #   uses: github/codeql-action/upload-sarif@v3
-      #   with:
-      #     sarif_file: changed-sources/apexScanResults.sarif - only for Advanced Security avaialble only for organization Github Account
-
-      - name: Upload Apex Scan Results as Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          name: apex-scan-results
-          path: changed-sources/apexScanResults.sarif
+          sarif_file: changed-sources/apexScanResults.sarif - only for Advanced Security avaialble only for organization Github Account
+
+      # - name: Upload Apex Scan Results as Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: apex-scan-results
+      #     path: changed-sources/apexScanResults.sarif
 
       - name: 'Check-only deploy delta changes - run specified tests'
         if: ${{ env.APEX_TESTS != 'all' }}
