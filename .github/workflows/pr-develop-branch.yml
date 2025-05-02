@@ -86,7 +86,8 @@ jobs:
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: changed-sources/apexScanResults.sarif - only for Advanced Security avaialble only for organization Github Account
+          sarif_file: changed-sources/apexScanResults.sarif
+          #  only for Advanced Security avaialble only for organization Github Account
 
       # - name: Upload Apex Scan Results as Artifact
       #   uses: actions/upload-artifact@v4
