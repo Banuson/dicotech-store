@@ -89,7 +89,7 @@ jobs:
       #     sarif_file: changed-sources/apexScanResults.sarif - only for Advanced Security avaialble only for organization Github Account
 
       - name: Upload Apex Scan Results as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: apex-scan-results
           path: changed-sources/apexScanResults.sarif
