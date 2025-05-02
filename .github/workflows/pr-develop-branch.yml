@@ -8,6 +8,7 @@ on:
       - 'force-app/**'
 permissions:
   contents: read
+  actions: read
   security-events: write
 
 jobs:
