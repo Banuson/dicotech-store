@@ -6,6 +6,9 @@ on:
     branches: [ main ]
     paths:
       - 'force-app/**'
+permissions:
+  contents: read
+  security-events: write
 
 jobs:
   validate-deployment-on-main-org:
