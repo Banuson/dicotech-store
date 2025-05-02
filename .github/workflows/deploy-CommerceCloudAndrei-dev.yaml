@@ -7,7 +7,7 @@ on:
       - 'force-app/**'
 
 jobs:
-  Deploy-to-sffnoobs-environment:
+  Deploy-to-CCAndreiDevgit statu-environment:
       runs-on: ubuntu-latest
       environment: CommerceCloudAndrei-dev
       steps:
