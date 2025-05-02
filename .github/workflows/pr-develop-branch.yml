@@ -117,6 +117,8 @@ jobs:
       - name: 'Deploy destructive changes (if any)'
         run: |
           sf project deploy start \
-            --manifest changed-sources/destructiveChanges/package.xml \
+            --destructive-changes changed-sources/destructiveChanges/destructiveChanges.xml \
             --dry-run \
             --ignore-conflicts
+            
+      # --manifest changed-sources/destructiveChanges/package.xml \
