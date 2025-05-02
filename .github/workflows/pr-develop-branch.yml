@@ -38,7 +38,6 @@ jobs:
       - name: 'Install sfdx-git-delta plugin'
         run: |
           echo y | sf plugins install sfdx-git-delta
-          sf plugins list
 
       - name: 'Install Java'
         run: |
