@@ -1,0 +1,125 @@
+name: Validate PR on main branch
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [ main ]
+    paths:
+      - 'force-app/**'
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+
+jobs:
+  validate-deployment-on-main-org:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 'Checkout source code'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 'Read PR Body'
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo $PR_BODY > ./pr_body.txt
+          node ./parsePR.js              
+          TESTS=$(cat testsToRun.txt)       
+          echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
+
+      - name: 'Install Salesforce CLI (sf)'
+        run: |
+          npm install @salesforce/cli --global
+          sf version
+
+      - name: 'Install sfdx-git-delta plugin'
+        run: |
+          echo y | sf plugins install sfdx-git-delta
+
+      - name: 'Install Java'
+        run: |
+          sudo apt-get update
+          sudo apt-get install default-jdk
+
+      - name: 'Install Salesforce Scanner'
+        run: |
+          npm install -g @salesforce/sfdx-scanner
+
+      - name: 'Create server key file'
+        run: echo "${{ secrets.JWT_SERVER_KEY }}" > server.key
+
+      - name: 'Authenticate with JWT'
+        run: |
+          sf org login jwt \
+            --username ${{ secrets.DEPLOYMENT_USER_NAME }} \
+            --jwt-key-file server.key \
+            --client-id ${{ secrets.CONSUMER_KEY }} \
+            --instance-url ${{ vars.INSTANCE_URL }} \
+            --set-default
+
+      - name: 'Create delta packages'
+        run: |
+          mkdir changed-sources
+          sf sgd source delta \
+            --to "HEAD" \
+            --from "HEAD^" \
+            --output-dir changed-sources/ \
+            --generate-delta \
+            --source-dir force-app/
+      - name: 'Scan Apex code'
+        run: |
+          cd changed-sources
+          sf scanner run \
+            --format sarif \
+            --target './**/*.cls' \
+            --category "Design,Best Practices,Performance" \
+            --outfile 'apexScanResults.sarif'
+          cd ..
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: changed-sources/apexScanResults.sarif
+          #  only for Advanced Security avaialble only for organization Github Account
+
+      # - name: Upload Apex Scan Results as Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: apex-scan-results
+      #     path: changed-sources/apexScanResults.sarif
+
+      - name: 'Check-only deploy delta changes - run specified tests'
+        if: ${{ env.APEX_TESTS != 'all' }}
+        run: |
+          echo "Running specified tests: ${{ env.APEX_TESTS }}"
+          sf project deploy start \
+            --source-dir changed-sources/force-app \
+            --test-level RunSpecifiedTests \
+            --runtests ${{ env.APEX_TESTS }} \
+            --dry-run \
+            --json
+
+      - name: 'Check-only deploy delta changes - run all tests'
+        if: ${{ env.APEX_TESTS == 'all' }}
+        run: |
+          sf project deploy start \
+            --source-dir changed-sources/force-app \
+            --test-level RunLocalTests \
+            --dry-run \
+            --json
+
+      # - name: 'Deploy destructive changes (if any)'
+      #   run: |
+      #      sf project deploy validate \
+      #       --target-org ${{ secrets.DEPLOYMENT_USER_NAME }} \
+      #       --pre-destructive-changes changed-sources/destructiveChanges/destructiveChanges.xml \
+      #       --json
+            
+      # --manifest changed-sources/destructiveChanges/package.xml \
